@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>README - LoRa Мульти-контроллер</title>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            font-size: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            max-width: 1012px;
+            margin: 0 auto;
+            padding: 45px;
+            background-color: #ffffff;
+            color: #24292e;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+        }
+        code {
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            background-color: rgba(27,31,35,0.05);
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        pre {
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: #f6f8fa;
+            border-radius: 3px;
+            margin-bottom: 16px;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        blockquote {
+            padding: 0 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e1;
+            margin: 0 0 16px 0;
+        }
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+        table th, table td {
+            padding: 6px 13px;
+            border: 1px solid #dfe2e5;
+        }
+        table tr {
+            background-color: #fff;
+            border-top: 1px solid #c6cbd1;
+        }
+        table tr:nth-child(2n) {
+            background-color: #f6f8fa;
+        }
+        img {
+            max-width: 100%;
+            box-sizing: content-box;
+            background-color: #fff;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #e1e4e8;
+            border: 0;
+        }
+        a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .toc {
+            margin-bottom: 30px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+    
+</head>
+<body>
+    <h1 id="lora-">LoRa Мульти-контроллер</h1>
+<p><strong>Система беспроводного управления реле через веб-интерфейс и настольное приложение</strong></p>
+<p><img alt="Версия прошивки TX" src="https://img.shields.io/badge/Версия_прошивки-TX_6-blue" />
+<img alt="Платформа TX" src="https://img.shields.io/badge/Платформа-ESP32-orange" />
+<img alt="Платформа RX" src="https://img.shields.io/badge/Платформа-Arduino_Nano-yellow" />
+<img alt="Язык приложения" src="https://img.shields.io/badge/Язык_приложения-Python_3-green" /></p>
+<p><img alt="Тест связи 1" src="тест1.jpg" />
+<img alt="Тест связи 2" src="тест2.jpg" />
+<img alt="Сборка RX" src="Общий вид приемника.jpg" />
+<img alt="Сборка TX" src="Общий вид передатчика.jpg" /></p>
+<hr />
+<h1 id="_1">📋 Содержание</h1>
+<ol>
+<li><a href="#описание-проекта">Описание проекта</a></li>
+<li><a href="#Технические-характеристики-приемника">Технические характеристики приемника</a></li>
+<li><a href="#архитектура-системы">Архитектура системы</a></li>
+<li><a href="#компоненты-системы">Компоненты системы</a></li>
+<li><a href="#передатчик-tx">Передатчик (TX)</a></li>
+<li><a href="#приёмник-rx">Приёмник (RX)</a></li>
+<li><a href="#настольное-приложение">Настольное приложение</a></li>
+<li><a href="#требования">Требования</a></li>
+<li><a href="#сборка-и-прошивка">Сборка и прошивка</a></li>
+<li><a href="#прошивка-передатчика">Прошивка передатчика</a></li>
+<li><a href="#прошивка-приёмника">Прошивка приёмника</a></li>
+<li><a href="#настройка-и-эксплуатация">Настройка и эксплуатация</a></li>
+<li><a href="#первый-запуск-передатчика">Первый запуск передатчика</a></li>
+<li><a href="#подключение-к-веб-интерфейсу">Подключение к веб-интерфейсу</a></li>
+<li><a href="#настройка-wifi">Настройка WiFi</a></li>
+<li><a href="#добавление-приёмников">Добавление приёмников</a></li>
+<li><a href="#полное-руководство-по-настольному-приложению">Полное руководство по настольному приложению</a></li>
+<li><a href="#первый-запуск-приложения">Первый запуск приложения</a></li>
+<li><a href="#интерфейс-приложения">Интерфейс приложения</a></li>
+<li><a href="#вкладка-мониторинг">Вкладка "Мониторинг"</a></li>
+<li><a href="#вкладка-управление-приемниками">Вкладка "Управление приемниками"</a></li>
+<li><a href="#вкладка-настройки-контроллера">Вкладка "Настройки контроллера"</a></li>
+<li><a href="#вкладка-консоль">Вкладка "Консоль"</a></li>
+<li><a href="#конфигурационный-файл">Конфигурационный файл</a></li>
+<li><a href="#api-эндпоинты">API эндпоинты</a></li>
+<li><a href="#протокол-связи">Протокол связи</a></li>
+<li><a href="#индикация-приёмника">Индикация приёмника</a></li>
+<li><a href="#обновление-прошивки-ota">Обновление прошивки OTA</a></li>
+<li><a href="#устранение-неполадок">Устранение неполадок</a></li>
+<li><a href="#известные-особенности">Известные особенности</a></li>
+<li><a href="#структура-проекта">Структура проекта</a></li>
+<li><a href="#-перспективы-развития">🚀 Перспективы развития</a></li>
+<li><a href="#-лицензия">📄 Лицензия</a></li>
+</ol>
+<hr />
+<h2 id="_2">Описание проекта</h2>
+<p>LoRa Мульти-контроллер — это система беспроводного управления реле и мониторинга параметров электросети на удалённых объектах. Система построена на базе современного микроконтроллера <strong>ESP32-C6</strong> (передатчик) и <strong>Arduino Nano</strong> (приёмник), использующих дальнобойный протокол <strong>LoRa</strong> (модули серии LR03, частота 850-931 МГц). Проект обеспечивает надёжное управление нагрузкой и сбор телеметрии через интуитивно понятное кроссплатформенное настольное приложение.</p>
+<h2 id="_3">Технические характеристики</h2>
+<p>Силовая часть:
+- Измерение текущего напряжение сети переменного тока 80-260В
+- Измерение тока 0 — 100А
+- Измерение активной мощности 0 — 22КВт
+- Измерение потребленной электроэнергии
+- Точность измерения 1%
+- Рабочая частота 45-65Гц
+- Диапазон температуры от -40 до +50</p>
+<p>Температура:
+- Диапазон измеряемых температур    -55°C до +125°C
+- Точность  ±0.5°C (в диапазоне -10°C до +85°C)</p>
+<p>GPS:
+- Рабочий температурный диапазон    -40°C ... +85°C
+- Погрешность позиционирования 2.5 метра</p>
+<p>Реле:
+- Тип нагрузки  AC (переменный ток)
+- Коммутируемое напряжение  24 — 380 VAC
+- Максимальный ток нагрузки 25А (AC)
+- Минимальный ток нагрузки  50 — 100 мА
+- Время включения   ≤ 10 мс (полупериод)
+- Время выключения  ≤ 10 мс
+- Рабочая температура   -30°C ... +80°C</p>
+<p>LoRa:
+- Рабочая частота 850-931 МГц
+- Мощность 28dBm
+- Рабочая температура -40°C ... +85°C
+- Антенна усиление 5 дБи</p>
+<h3 id="_4">Ключевые возможности:</h3>
+<ul>
+<li><strong>Удалённое управление:</strong> Включение и выключение реле через настольное приложение</li>
+<li><strong>Поддержка до 10 приёмников:</strong> Одновременная работа с множеством приёмников</li>
+<li><strong>Расширенный мониторинг:</strong> Сбор данных о температуре (DS18B20), GPS координатах и параметрах электросети (PZEM-004T)</li>
+<li><strong>Мониторинг состояния:</strong> Отслеживание статуса всех приёмников в реальном времени</li>
+<li><strong>Веб-интерфейс:</strong> Настройка Wi-Fi, OTA обновление и онлайн-мониторинг через браузер</li>
+<li><strong>Настольное приложение:</strong> Полное управление приёмниками и настройка системы</li>
+<li><strong>OTA обновление:</strong> Обновление прошивки передатчика по воздуху</li>
+<li><strong>Авторизация:</strong> Защищённый доступ к управлению</li>
+<li><strong>NTP синхронизация:</strong> Автоматическая синхронизация времени</li>
+</ul>
+<hr />
+<h2 id="_5">Архитектура системы</h2>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────┐
+│                        СИСТЕМА LoRa                             │
+│                                                                 │
+│  ┌──────────────┐         LoRa (UART)         ┌──────────────┐  │
+│  │ TX (ESP32-C6)│═══════════════════════════▶│ RX (Arduino) │  │
+│  │  Передатчик  │         9600 baud           │  Приёмник    │  │
+│  │              │◀═══════════════════════════│              │  │
+│  └──────┬───────┘                             └───────┬──────┘  │
+│         │                                             │         │
+│         │ WiFi                                        │ Реле    │
+│         │                                             │ LED     │
+│         ▼                                             ▼         │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │              ВЕБ-ИНТЕРФЕЙС / API                        │    │
+│  │  • Настройка WiFi                                       │    │
+│  │  • OTA обновление                                       │    │
+│  │  • Мониторинг                                           │    │
+│  │  • Управление реле                                      │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                              │                                  │
+│                         TCP/HTTP                                │
+│                              ▼                                  │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │              НАСТОЛЬНОЕ ПРИЛОЖЕНИЕ (Monitoring LoRa)    │    │
+│  │  • Автоматическое сканирование сети                     │    │
+│  │  • Мониторинг в реальном времени                        │    │
+│  │  • Управление всеми приёмниками                         │    │
+│  │  • Просмотр консоли                                     │    │
+│  │  • Настройка конфигурации                               │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<hr />
+<h2 id="_6">Компоненты системы</h2>
+<h3 id="tx">Передатчик (TX)</h3>
+<p><strong>Платформа:</strong> ESP32-C6 </p>
+<p><strong>Функции:</strong>
+- Подключение к WiFi сети (режим клиента) или создание точки доступа
+- Веб-интерфейс для настройки WiFi и OTA обновления
+- <strong>Онлайн-монитор:</strong> Просмотр статуса приёмников через браузер
+- OTA (Over-The-Air) обновление прошивки
+- Поддержка до 10 приёмников
+- Авторизация пользователей
+- NTP-синхронизация времени
+- REST API для интеграции с настольным приложением</p>
+<p><strong>Режимы работы WiFi:</strong>
+- <strong>Режим точки доступа:</strong> Создаёт сеть <code>LoRaTransmitterAP</code> (пароль: <code>12345678</code>)
+- <strong>Режим клиента:</strong> Подключается к существующей WiFi сети</p>
+<h3 id="rx">Приёмник (RX)</h3>
+<p><strong>Платформа:</strong> Arduino Nano (или совместимая)</p>
+<p><strong>Компоненты:</strong>
+- Реле (управление нагрузкой)
+- Светодиод WS2812 для индикации состояния
+- Кнопка теста связи
+- <strong>PZEM-004T:</strong> Измерение напряжения, тока, мощности, энергии
+- <strong>DS18B20:</strong> Датчик температуры
+- <strong>GPS:</strong> Модуль GPS для определения координат</p>
+<p><strong>Функции:</strong>
+- Приём команд от передатчика по LoRa
+- Управление реле (ВКЛ/ВЫКЛ)
+- Визуальная индикация состояния
+- Сбор и отправка данных сенсоров (температура, координаты, параметры сети)
+- Периодическая отправка статуса
+- Тест связи по кнопке</p>
+<h3 id="_7">Настольное приложение</h3>
+<p><strong>Платформа:</strong> Кроссплатформенное (Windows, Linux, macOS)</p>
+<p><strong>Технологии:</strong> Python 3, tkinter, requests, configparser</p>
+<p><strong>Функции:</strong>
+- Автоматическое сканирование сети для поиска контроллера
+- Мониторинг состояния всех приёмников в реальном времени (включая данные сенсоров)
+- Полное управление приёмниками (включение/выключение реле) на отдельной вкладке
+- <strong>Полноценный CRUD для приёмников:</strong> добавление, редактирование, удаление приёмников
+- Настройки WiFi подключения контроллера через веб-интерфейс
+- OTA обновление прошивки через веб-интерфейс
+- Просмотр консольного вывода контроллера в реальном времени
+- Автоматическое обновление данных (настраиваемый интервал)
+- Хранение настроек в конфигурационном файле</p>
+<hr />
+<h2 id="_8">Требования</h2>
+<h3 id="tx_1">Для передатчика (TX):</h3>
+<ul>
+<li>Плата ESP32-C6 </li>
+<li>USB кабель для прошивки</li>
+<li>Arduino IDE 1.8.x или выше</li>
+<li>Библиотеки Arduino:</li>
+<li>WiFi</li>
+<li>WebServer</li>
+<li>EEPROM</li>
+<li>Update</li>
+<li>NTPClient</li>
+<li>ArduinoJson</li>
+<li>esp_wifi</li>
+</ul>
+<h3 id="rx_1">Для приёмника (RX):</h3>
+<ul>
+<li>Arduino Nano (или совместимая плата)</li>
+<li>USB кабель для прошивки</li>
+<li>Arduino IDE 1.8.x или выше</li>
+<li>Библиотеки:</li>
+<li>Adafruit_NeoPixel</li>
+<li>PZEM004Tv30</li>
+<li>TinyGPS++</li>
+<li>OneWire</li>
+<li>DallasTemperature</li>
+<li>SoftwareSerial</li>
+</ul>
+<hr />
+<h2 id="_9">Сборка и прошивка</h2>
+<h3 id="_10">Прошивка передатчика</h3>
+<ol>
+<li><strong>Установите Arduino IDE</strong> с поддержкой ESP32.</li>
+<li><strong>Откройте файл прошивки:</strong>
+   <code>TX_test2/TX_test2.ino</code></li>
+<li><strong>Выберите плату:</strong></li>
+<li><code>Инструменты → Плата → ESP32 Dev Module</code> (или соответствующую вашу плату)</li>
+<li><strong>Выберите порт:</strong></li>
+<li><code>Инструменты → Порт</code> — выберите COM-порт</li>
+<li><strong>Загрузите прошивку:</strong></li>
+<li>Нажмите <code>Скетч → Загрузить</code></li>
+</ol>
+<h3 id="_11">Прошивка приёмника</h3>
+<ol>
+<li>
+<p><strong>Откройте файл прошивки:</strong>
+   <code>RX/RX.ino</code></p>
+</li>
+<li>
+<p><strong>Выберите плату:</strong></p>
+</li>
+<li>
+<p><code>Инструменты → Плата → Arduino Nano</code></p>
+</li>
+<li>
+<p><strong>Выберите процессор:</strong></p>
+</li>
+<li>
+<p><code>Инструменты → Процессор → ATmega328P (Old Bootloader)</code> или <code>ATmega328P</code></p>
+</li>
+<li>
+<p><strong>Выберите порт:</strong></p>
+</li>
+<li>
+<p><code>Инструменты → Порт</code> — выберите COM-порт</p>
+</li>
+<li>
+<p><strong>Загрузите прошивку:</strong></p>
+</li>
+<li>Нажмите <code>Скетч → Загрузить</code></li>
+</ol>
+<hr />
+<h2 id="_12">Настройка и эксплуатация</h2>
+<h3 id="_13">Первый запуск передатчика</h3>
+<p>При первом запуске передатчик работает в режиме точки доступа:</p>
+<ol>
+<li>Подключите питание к ESP32-C6</li>
+<li>На компьютере или телефоне найдите сеть <strong>LoRaTransmitterAP</strong></li>
+<li>Подключитесь с паролем: <strong>12345678</strong></li>
+<li>Откройте браузер и перейдите по адресу: <code>http://192.168.4.1</code></li>
+<li>Введите учётные данные для входа:</li>
+<li>Логин: <strong>admin</strong></li>
+<li>Пароль: <strong>настраивается в прошивке</strong></li>
+</ol>
+<h3 id="-">Подключение к веб-интерфейсу</h3>
+<p>После настройки WiFi (режим клиента):</p>
+<ol>
+<li>Узнайте IP адрес устройства:</li>
+<li>Из веб-интерфейса (страница настроек WiFi)</li>
+<li>Из консоли настольного приложения</li>
+<li>Через поиск настольного приложения</li>
+<li>
+<p>Из таблицы DHCP вашего роутера</p>
+</li>
+<li>
+<p>Откройте браузер и введите IP адрес</p>
+</li>
+<li>Введите логин и пароль</li>
+</ol>
+<h3 id="wifi">Настройка WiFi</h3>
+<ol>
+<li>Перейдите на страницу "Настройки WiFi"</li>
+<li>Включите режим клиента (checkbox)</li>
+<li>Выберите сеть из списка или введите вручную</li>
+<li>Введите пароль сети</li>
+<li>Нажмите "Сохранить настройки"</li>
+<li>Устройство перезагрузится и подключится к указанной сети</li>
+</ol>
+<h3 id="_14">Добавление приёмников</h3>
+<p>Приёмники добавляются и настраиваются через <strong>настольное приложение</strong> на вкладке "Управление приемниками":</p>
+<ol>
+<li>Откройте вкладку "Управление приемниками"</li>
+<li>Нажмите кнопку <strong>"+ Добавить приемник"</strong></li>
+<li>Заполните поля в диалоговом окне:</li>
+<li><strong>Имя:</strong> понятное название (например, "Гараж", "Освещение")</li>
+<li><strong>Адрес:</strong> HEX адрес приёмника (например, 01, 0A, 1F)</li>
+<li>Нажмите "Сохранить"</li>
+</ol>
+<blockquote>
+<p><strong>Важно:</strong> Адреса приёмников должны соответствовать адресам, заданным в прошивке RX (по умолчанию: 0x01, 0x02)</p>
+</blockquote>
+<hr />
+<h1 id="_15">Полное руководство по настольному приложению</h1>
+<p>Настольное приложение <code>Monitoring LoRa</code> предоставляет удобный интерфейс для мониторинга и управления системой LoRa Мульти-контроллер. В этом разделе приведена подробная инструкция от установки до полноценной работы с приложением.</p>
+<h2 id="_16">Первый запуск приложения</h2>
+<h3 id="_17">Запуск приложения</h3>
+<ol>
+<li>Monitoring LoRa.exe</li>
+</ol>
+<h3 id="_18">Что происходит при первом запуске</h3>
+<p><img alt="screen" src="screen/capture_260121_111858.png" /></p>
+<p>При первом запуске приложение не имеет конфигурации и предлагает два способа настройки подключения.</p>
+<h3 id="1-ip">Способ 1: Ручной ввод IP адреса</h3>
+<ol>
+<li>Введите IP адрес передатчика (по умолчанию: <code>192.168.4.1</code>)</li>
+<li>Нажмите <code>Сохранить</code> </li>
+</ol>
+<h3 id="2">Способ 2: Автоматическое сканирование сети</h3>
+<ol>
+<li>Нажмите кнопку <strong>"🔍 Автоматическое сканирование сети"</strong></li>
+<li>Откроется диалог сканирования:</li>
+</ol>
+<p><img alt="screen" src="screen/capture_260121_114121.png" /></p>
+<ol>
+<li>Введите префикс сети (например: <code>192.168.28</code>)</li>
+<li>Нажмите <code>Начать сканирование</code></li>
+</ol>
+<p><strong>Процесс сканирования:</strong></p>
+<p><img alt="screen" src="screen/capture_260121_114321.png" /></p>
+<ol>
+<li>После обнаружения контроллера нажмите <strong>"Использовать это устройство"</strong></li>
+</ol>
+<h3 id="_19">Если контроллер не найден</h3>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────────────────────────────────┐
+│              Сканирование сети                          │
+│                                                         │
+│    Введите префикс сети:                                │
+│                                                         │
+│    ┌─────────────────────────────────────────────┐      │
+│    │ 192.168.1                                   │      │
+│    └─────────────────────────────────────────────┘      │
+│                                                         │
+│    ✗ LoRa контроллер не найден в указанной сети        │
+│                                                         │
+│              [Начать сканирование]                      │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<p><strong>Возможные причины:</strong>
+- Контроллер не включён или не в сети
+- Неправильный префикс сети
+- Брандмауэр блокирует соединение
+- Контроллер работает в режиме точки доступа (AP)</p>
+<p><strong>Решения:</strong>
+1. Проверьте правильность префикса сети
+2. Убедитесь, что контроллер включён
+3. Попробуйте ручной ввод IP
+4. Проверьте подключение к той же сети</p>
+<h3 id="_20">Успешное подключение</h3>
+<p>После настройки подключения откроется главное окно приложения:</p>
+<p><img alt="screen" src="screen/capture_260212_112147.png" /></p>
+<h2 id="_21">Интерфейс приложения</h2>
+<p>Приложение имеет структуру с вкладками для удобного доступа к различным функциям.</p>
+<h3 id="_22">Вкладка "Мониторинг"</h3>
+<p>Вкладка мониторинга отображает общую информацию о системе и статус всех приёмников.</p>
+<p><strong>Секция "Информация об устройстве":</strong></p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Версия прошивки</td>
+<td>Текущая версия прошивки TX</td>
+</tr>
+<tr>
+<td>Устройство</td>
+<td>Название устройства</td>
+</tr>
+<tr>
+<td>Время запуска</td>
+<td>Время когда устройство было запущено</td>
+</tr>
+<tr>
+<td>Uptime устройства</td>
+<td>Время сколько устройство в работе</td>
+</tr>
+<tr>
+<td>Фрагментация кучи</td>
+<td>Процент фрагментации памяти</td>
+</tr>
+<tr>
+<td>Свободная память</td>
+<td>Кол-во свободной памяти</td>
+</tr>
+<tr>
+<td>Размер Flash</td>
+<td>Общий объем ПЗУ</td>
+</tr>
+<tr>
+<td>Активных приемников</td>
+<td>Кол-во активных (в сети) на данный момент приемников</td>
+</tr>
+<tr>
+<td>IP адрес</td>
+<td>Сетевой адрес контроллера</td>
+</tr>
+<tr>
+<td>Wi-Fi RSSI</td>
+<td>Уровень сигнала Wi-Fi на контроллере</td>
+</tr>
+<tr>
+<td>Сеть Wi-Fi</td>
+<td>Название сети к которой подключен контроллер</td>
+</tr>
+<tr>
+<td>Режим Wi-Fi</td>
+<td>Режим в котором работает контроллер (клиент или AP)</td>
+</tr>
+<tr>
+<td>Статус Wi-Fi</td>
+<td>Подключен ли Wi-Fi в данный момент</td>
+</tr>
+<tr>
+<td>Последнее обновление</td>
+<td>Время последних данных от контроллера</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Секция "Приемники (Receivers)":</strong></p>
+<p>Таблица со списком всех настроенных приёмников:</p>
+<table>
+<thead>
+<tr>
+<th>Колонка</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Имя</td>
+<td>Имя приёмника (из конфигурации)</td>
+</tr>
+<tr>
+<td>Адрес</td>
+<td>Адрес приемника (из конфигурации)</td>
+</tr>
+<tr>
+<td>Статус</td>
+<td>Онлайн/Офлайн</td>
+</tr>
+<tr>
+<td>Реле</td>
+<td>Включено/Выключено</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Управление из вкладки мониторинга:</strong></p>
+<ul>
+<li>Автоматическое обновление каждые 3 секунды (кнопка включение/выключение)</li>
+<li>Настройка подключения</li>
+<li>Включение/выключение реле, тест связи с приемником</li>
+</ul>
+<h3 id="_23">Вкладка "Управление приемниками"</h3>
+<p><img alt="screen" src="screen/capture_260212_112552.png" /></p>
+<p><strong>Функции:</strong></p>
+<ol>
+<li><strong>Управление приёмниками (CRUD):</strong></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Кнопка</th>
+<th>Функция</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>➕ Добавить</code></td>
+<td>Добавление нового приёмника</td>
+<td>Открывает диалог для создания нового приёмника с указанием имени и HEX-адреса (01-FE)</td>
+</tr>
+<tr>
+<td><code>✏️ Редактировать</code></td>
+<td>Изменение приёмника</td>
+<td>Открывает диалог редактирования выбранного приёмника с отображением текущего статуса (онлайн/офлайн, состояние реле, последняя активность)</td>
+</tr>
+<tr>
+<td><code>🗑️ Удалить</code></td>
+<td>Удаление приёмника</td>
+<td>Удаляет выбранный приёмник с подтверждением (с предупреждением о перестройке ID)</td>
+</tr>
+<tr>
+<td><code>📡 Тест связи</code></td>
+<td>Проверка связи</td>
+<td>Отправляет команду теста связи выбранному приёмнику</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p><strong>Выбор приёмника:</strong></p>
+</li>
+<li>
+<p>Выпадающий список для быстрого выбора приёмника</p>
+</li>
+<li>
+<p>Отображение статуса выбранного приёмника</p>
+</li>
+<li>
+<p><strong>Управление реле:</strong></p>
+</li>
+<li>
+<p>Нажмите [ВКЛ] для включения реле</p>
+</li>
+<li>Нажмите [ВЫКЛ] для выключения реле</li>
+<li>
+<p>Нажмите [ТЕСТ] для проверки связи с конкретным приемником</p>
+</li>
+<li>
+<p><strong>Таблица со списком всех настроенных приёмников:</strong></p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Колонка</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID</td>
+<td>Порядковый номер приемника в приложении</td>
+</tr>
+<tr>
+<td>Имя</td>
+<td>приёмника (из конфигурации)</td>
+</tr>
+<tr>
+<td>Адрес</td>
+<td>Адрес приемника (из конфигурации)</td>
+</tr>
+<tr>
+<td>Состояние реле</td>
+<td>Включено/Выключено</td>
+</tr>
+<tr>
+<td>Онлайн</td>
+<td>Онлайн/Офлайн</td>
+</tr>
+<tr>
+<td>Температура</td>
+<td>Данные с датчика температуры</td>
+</tr>
+<tr>
+<td>Напр. (В)</td>
+<td>Текущее напряжение сети 220В</td>
+</tr>
+<tr>
+<td>Ток (А)</td>
+<td>Потребляемый ток на управляемой розетки</td>
+</tr>
+<tr>
+<td>Мощн.(Вт)</td>
+<td>Текущаяя мощность розетки</td>
+</tr>
+<tr>
+<td>Энергия</td>
+<td>Сумарно накопительная энергия кВт*ч</td>
+</tr>
+<tr>
+<td>PF</td>
+<td>Коэфициент качества сети 220в от 0 до 1 чем выше тем лучше</td>
+</tr>
+<tr>
+<td>Координаты</td>
+<td>Текущие координаты приемника</td>
+</tr>
+<tr>
+<td>Последняя активность</td>
+<td>Время сколько прошло с момента получения последней информации от приемника</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p><strong>Статус:</strong></p>
+</li>
+<li>
+<p>Сводная информация о выбранном приемнике</p>
+</li>
+</ol>
+<hr />
+<h3 id="_24">Вкладка "Настройки контроллера"</h3>
+<p><img alt="screen" src="screen/capture_260212_112324.png" /></p>
+<p><strong>Функции:</strong></p>
+<ol>
+<li><strong>Перезагрузка контроллера:</strong></li>
+<li>Нажмите "🔄 Перезагрузить контроллер"</li>
+<li>
+<p>Подтвердите действие</p>
+</li>
+<li>
+<p><strong>Настройки Wi-Fi:</strong></p>
+</li>
+<li>
+<p>Нажмите для открытия веб страницы где можно выбрать режим работы Wi-Fi (client/ap)</p>
+</li>
+<li>
+<p><strong>OTA Обновление:</strong></p>
+</li>
+<li>
+<p>Нажмите для открытия веб страницы обновления прошивки контроллера</p>
+</li>
+<li>
+<p><strong>Сводный отчет:</strong></p>
+</li>
+<li>Нажмите для открытия окна сводного отчета (краткой информации о контроллере и приемниках)</li>
+</ol>
+<p><img alt="screen" src="screen/capture_260121_140842.png" /></p>
+<ol>
+<li><strong>Онлайн монитор:</strong></li>
+<li>Нажмите для открытия веб страницы информации о приемниках</li>
+</ol>
+<p><img alt="screen" src="screen/capture_260212_1240071.png" /></p>
+<p><strong>Информация о контроллере</strong></p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MAC адрес</td>
+<td>физический адрес контроллера для локальной сети</td>
+</tr>
+<tr>
+<td>IP адрес</td>
+<td>Сетевой адрес контроллера</td>
+</tr>
+<tr>
+<td>Шлюз</td>
+<td>IP адрес шлюза (он же NTP сервер по умолчанию)</td>
+</tr>
+<tr>
+<td>Маска подсети</td>
+<td>Сетевая маска подсети</td>
+</tr>
+<tr>
+<td>Макс. приемников</td>
+<td>Максимальное кол-во приемников которые можно подключить к данному контроллеру</td>
+</tr>
+<tr>
+<td>Частота LoRa</td>
+<td>Частота на которой работает контроллер</td>
+</tr>
+<tr>
+<td>MAC адрес LoRa</td>
+<td>физический адрес контроллера по которому связываются приемники</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Статус системы</strong></p>
+<p>Сводная информация о работе самого контроллера.
+ - Статусы подсистем (Wi-Fi, LoRa модуль, Web сервер, Консоль)
+ - Прогресс бар использования IRAM контроллера (при достижении более 80% контроллер автоматически перезагрузится)
+  - Статистика системы (кол-во активных приемников/всего приемников, кол-во IRAM общее, Uptime контроллера)</p>
+<h3 id="_25">Вкладка "Консоль"</h3>
+<p><img alt="screen" src="screen/capture_260212_112341.png" /></p>
+<p><strong>Функции:</strong></p>
+<ol>
+<li><strong>Просмотр логов:</strong></li>
+<li>В реальном времени отображаются все события контроллера</li>
+<li>Автоматически обновляется каждую секунду</li>
+<li>
+<p>Прокрутка к последнему сообщению</p>
+</li>
+<li>
+<p><strong>Сохранение в файл:</strong></p>
+</li>
+<li>Нажмите "💾 Экспорт логов в файл"</li>
+<li>Выберите место для сохранения</li>
+</ol>
+<h3 id="_26">Конфигурационный файл</h3>
+<p>Приложение хранит настройки в конфигурационном файле:</p>
+<p><strong>Windows:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c">%APPDATA%\LoraMonitor\lora.ini</span>
+</code></pre></div>
+
+<p><strong>Linux/Mac:</strong></p>
+<div class="codehilite"><pre><span></span><code>~/.loramonitor/lora.ini
+</code></pre></div>
+
+<p><strong>Структура файла:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[DEFAULT]</span>
+<span class="na">base_url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">http://192.168.*.*</span>
+<span class="na">last_scan_network</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">192.168.*</span>
+<span class="na">update_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3000</span>
+</code></pre></div>
+
+<p><strong>Параметры:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Описание</th>
+<th>По умолчанию</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base_url</td>
+<td>URL контроллера</td>
+<td>пусто</td>
+</tr>
+<tr>
+<td>last_scan_network</td>
+<td>Префикс сети для сканирования</td>
+<td>192.168.*</td>
+</tr>
+<tr>
+<td>update_interval</td>
+<td>Интервал обновления (мс)</td>
+<td>3000</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="api">API эндпоинты</h2>
+<p>Настольное приложение взаимодействует с контроллером через следующие HTTP API:</p>
+<h3 id="_27">Эндпоинты статуса и информации</h3>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Эндпоинт</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/status</code></td>
+<td>Получение информации об устройстве (JSON, без авторизации)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/all_receivers_status</code></td>
+<td>Получение статуса всех приёмников (JSON)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/console_json</code></td>
+<td>Получение консольного вывода (JSON, без авторизации)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/wifi_settings</code></td>
+<td>Получение настроек WiFi (HTML)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ota_update</code></td>
+<td>Страница OTA обновления (HTML)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ui_lock_status</code></td>
+<td>Статус блокировки интерфейса (<code>locked</code>/<code>unlocked</code>)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/monitor</code></td>
+<td>Публичная страница мониторинга (HTML)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_28">Эндпоинты управления реле</h3>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Эндпоинт</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/relay_on</code></td>
+<td>Включение реле (параметр: <code>receiver</code> - индекс)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/relay_off</code></td>
+<td>Выключение реле (параметр: <code>receiver</code> - индекс)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/test_connection</code></td>
+<td>Тест связи (параметр: <code>receiver</code> - индекс)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_29">Эндпоинты системного управления</h3>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Эндпоинт</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/reboot</code></td>
+<td>Перезагрузка контроллера</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/update</code></td>
+<td>Загрузка файла прошивки (OTA)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/scan_wifi</code></td>
+<td>Сканирование доступных WiFi сетей (JSON)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/save_wifi</code></td>
+<td>Сохранение настроек WiFi</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_30">Эндпоинты авторизации</h3>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Эндпоинт</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/login</code></td>
+<td>Авторизация через веб-форму</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/login</code></td>
+<td>API авторизация для приложения</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/logout</code></td>
+<td>Выход из системы</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rest-api-v1">REST API v1 для управления приёмниками</h3>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Эндпоинт</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/receivers</code></td>
+<td>Получение списка всех приёмников</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/v1/receivers</code></td>
+<td>Создание нового приёмника (JSON)</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/api/v1/receivers</code></td>
+<td>Обновление приёмника (JSON)</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/v1/receivers</code></td>
+<td>Удаление приёмника (JSON)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/v1/receivers/bulk</code></td>
+<td>Массовое обновление приёмников (JSON)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/v1/receivers/test</code></td>
+<td>Тест связи с приёмником (JSON)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/v1/receivers/reset</code></td>
+<td>Сброс настроек приёмников</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_31">Примеры запросов</h3>
+<details>
+<summary>Показать примеры curl-запросов и ответов</summary>
+
+**Получение статуса устройства:**
+
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>http://192.168.28.108/status
+</code></pre></div>
+
+
+
+**Ответ:**
+
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;receivers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ПК-10&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0x03&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;relay_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;online&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;last_activity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6432639</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;last_activity_ago&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">86</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;temperature&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">26</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;voltage&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">234.7</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;current&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;power&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;energy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.815</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;frequency&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;pf&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;latitude&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;longitude&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;wifi_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CLIENT&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ssid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SPA&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;wifi_rssi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-68</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;wifi_connected&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ip_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.168.28.162&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;mac_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;98A3169EECA4&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;mac_address_formatted&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;98:A3:16:9E:EC:A4&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;firmware_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;device_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LoRa Мульти-контроллер&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;build_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feb  7 2026 22:27:04&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;active_receiver_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_receivers&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;free_heap&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">269800</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;heap_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">403484</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;heap_fragmentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;flash_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4194304</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ota_in_progress&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;uptime&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6519347</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;uptime_seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6519</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+**Включение реле приёмника (индекс 0):**
+
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>http://192.168.28.108/relay_on?receiver<span class="o">=</span><span class="m">0</span>
+</code></pre></div>
+
+
+
+**Получение списка приёмников (v1):**
+
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>http://192.168.28.108/api/v1/receivers
+</code></pre></div>
+
+
+
+**Ответ:**
+
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;receivers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ПК-10&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0x03&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;online&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;relay_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;last_activity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6559083</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;memory_usage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;free_heap&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">288732</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fragmentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+**Создание нового приёмника:**
+
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://192.168.28.108/api/v1/receivers<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;name&quot;: &quot;Баня&quot;, &quot;address&quot;: &quot;05&quot;}&#39;</span>
+</code></pre></div>
+
+
+
+**Тест связи с приёмником (v1):**
+
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://192.168.28.108/api/v1/receivers/test<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;address&quot;: &quot;05&quot;}&#39;</span>
+</code></pre></div>
+
+
+
+**Получение консоли:**
+
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>http://192.168.28.108/console_json
+</code></pre></div>
+
+
+
+**Ответ:**
+
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;console_output&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-02-12 10:30:15 === LoRa Мульти-контроллер ===\nВерсия: 6\n...&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+</details>
+
+<hr />
+<h2 id="_32">Протокол связи</h2>
+<h3 id="tx-rx">Команды (TX → RX)</h3>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RON</code></td>
+<td>Включить реле</td>
+</tr>
+<tr>
+<td><code>ROF</code></td>
+<td>Выключить реле</td>
+</tr>
+<tr>
+<td><code>TST</code></td>
+<td>Тест связи</td>
+</tr>
+<tr>
+<td><code>TEMP:</code></td>
+<td>Префикс данных температуры (отправляет RX)</td>
+</tr>
+<tr>
+<td><code>GPS:</code></td>
+<td>Префикс данных GPS (lat,lng, отправляет RX)</td>
+</tr>
+<tr>
+<td><code>PZEM:</code></td>
+<td>Префикс данных PZEM (V,A,W,kWh,Hz,PF, отправляет RX)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rx-tx">Ответы (RX → TX)</h3>
+<table>
+<thead>
+<tr>
+<th>Ответ</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OK1</code></td>
+<td>Реле включено успешно</td>
+</tr>
+<tr>
+<td><code>OK0</code></td>
+<td>Реле выключено успешно</td>
+</tr>
+<tr>
+<td><code>STA1</code></td>
+<td>Статус: реле включено</td>
+</tr>
+<tr>
+<td><code>STA0</code></td>
+<td>Статус: реле выключено</td>
+</tr>
+<tr>
+<td><code>TSTOK</code></td>
+<td>Тест связи успешен</td>
+</tr>
+<tr>
+<td><code>ACKT</code></td>
+<td>Подтверждение получения температуры</td>
+</tr>
+<tr>
+<td><code>ACKG</code></td>
+<td>Подтверждение получения координат GPS</td>
+</tr>
+<tr>
+<td><code>ACKP</code></td>
+<td>Подтверждение получения данных PZEM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_33">Формат сообщений</h3>
+<div class="codehilite"><pre><span></span><code><span class="o">[</span><span class="n">XX</span><span class="o">]</span><span class="n">MESSAGE</span><span class="err">\</span><span class="n">r</span><span class="err">\</span><span class="n">n</span>
+</code></pre></div>
+
+<p>Где:
+- <code>XX</code> — HEX адрес приёмника (01, 02, 0A, и т.д.)
+- <code>MESSAGE</code> — команда или ответ
+- <code>\r\n</code> — конец строки</p>
+<h3 id="_34">Адресация</h3>
+<table>
+<thead>
+<tr>
+<th>Адрес</th>
+<th>Устройство</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>Контроллер (TX)</td>
+</tr>
+<tr>
+<td>0x01</td>
+<td>Приёмник 1</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>Приёмник 2</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_35">Индикация приёмника</h2>
+<p>Светодиод WS2812 отображает состояние приёмника:</p>
+<table>
+<thead>
+<tr>
+<th>Состояние</th>
+<th>Цвет</th>
+<th>Режим</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ожидание</td>
+<td>Синий</td>
+<td>Медленное мигание (каждые 2 сек)</td>
+</tr>
+<tr>
+<td>Реле включено</td>
+<td>Красный</td>
+<td>Постоянный</td>
+</tr>
+<tr>
+<td>Тест связи</td>
+<td>Жёлтый</td>
+<td>Мигание</td>
+</tr>
+<tr>
+<td>Успех</td>
+<td>Зелёный</td>
+<td>2 секунды</td>
+</tr>
+<tr>
+<td>Ошибка / Таймаут</td>
+<td>Красный</td>
+<td>Быстрое мигание (5 раз)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_36">Индикация при старте</h3>
+<ol>
+<li><strong>Синий</strong> — инициализация</li>
+<li><strong>Зелёный</strong> — старт завершён</li>
+<li><strong>Выключен</strong> — готов к работе</li>
+</ol>
+<hr />
+<h2 id="ota">Обновление прошивки OTA</h2>
+<h3 id="-_1">Через веб-интерфейс</h3>
+<ol>
+<li>Откройте веб-интерфейс контроллера</li>
+<li>Перейдите на страницу "OTA Обновление"</li>
+<li>Нажмите "Выберите файл прошивки"</li>
+<li>Выберите <code>.bin</code> файл новой прошивки</li>
+<li>Нажмите "🚀 Загрузить и обновить"</li>
+<li>Дождитесь завершения обновления (контроллер перезагрузится)</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>Важно:</strong> Не отключайте питание во время обновления!</p>
+</blockquote>
+<h3 id="arduino-ide">Через Arduino IDE</h3>
+<ol>
+<li>Откройте <code>TX/TX.ino</code></li>
+<li>Внесите необходимые изменения</li>
+<li><code>Скетч → Экспорт бинарного файла</code></li>
+<li>Загрузите полученный <code>.bin</code> через веб-интерфейс</li>
+</ol>
+<hr />
+<h2 id="_37">Устранение неполадок</h2>
+<h3 id="wifi_1">Передатчик не подключается к WiFi</h3>
+<p><strong>Симптомы:</strong>
+- Устройство не отвечает
+- В консоли сообщение "Не удалось подключиться к WiFi"</p>
+<p><strong>Решения:</strong>
+1. Проверьте правильность SSID и пароля
+2. Убедитесь, что роутер включён
+3. Проверьте уровень сигнала
+4. Сбросьте настройки WiFi и настройте заново</p>
+<h3 id="_38">Приёмник не отвечает</h3>
+<p><strong>Симптомы:</strong>
+- Статус "Офлайн" в приложении
+- Нет ответа на команды</p>
+<p><strong>Решения:</strong>
+1. Проверьте питание приёмника
+2. Проверьте подключение LoRa модуля
+3. Проверьте соответствие адресов (TX и RX)
+4. Проверьте светодиодную индикацию
+5. Нажмите кнопку TEST на приёмнике для теста связи</p>
+<h3 id="_39">Не удаётся подключиться к контроллеру из приложения</h3>
+<p><strong>Симптомы:</strong>
+- "Ошибка подключения" при запуске
+- Сканирование не находит устройство</p>
+<p><strong>Решения:</strong>
+1. Проверьте, что контроллер включён
+2. Убедитесь, что компьютер и контроллер в одной сети
+3. Проверьте брандмауэр (должен разрешать входящие соединения)
+4. Попробуйте ручной ввод IP адреса
+5. Проверьте IP адрес в таблице DHCP роутера</p>
+<h2 id="_40">Известные особенности</h2>
+<ol>
+<li>
+<p><strong>HEX адреса:</strong> Приёмники адресуются в HEX формате (01, 0A, 1F и т.д.)</p>
+</li>
+<li>
+<p><strong>Фрагментация памяти:</strong> ESP32-C6 автоматически перезагружается при фрагментации памяти &gt;80%</p>
+</li>
+<li>
+<p><strong>Версия EEPROM:</strong> При изменении структуры данных необходимо обновить <code>CONFIG_VERSION</code> в коде</p>
+</li>
+<li>
+<p><strong>Совместимость приёмников:</strong> Код RX и TX должны использовать совместимый протокол связи</p>
+</li>
+<li>
+<p><strong>Многопоточное сканирование:</strong> Приложение использует 20 потоков для параллельного сканирования сети</p>
+</li>
+<li>
+<p><strong>Кроссплатформенность:</strong> Настольное приложение использует <code>os.name</code> для определения ОС</p>
+</li>
+<li>
+<p><strong>Автоматическое обновление:</strong> Приложение обновляет данные каждые 3 секунды (настраивается)</p>
+</li>
+</ol>
+<hr />
+<h2 id="_41">Структура проекта</h2>
+<div class="codehilite"><pre><span></span><code>LoRa-Multi-Controller/
+│
+├── README.md                    # Этот файл
+├── app.py                       # Настольное приложение (Python/tkinter)
+│
+├── TX_Last/
+│   └── TX_Last.ino             # Прошивка передатчика (ESP32-C6)
+│
+└── RX_Last/
+    └── RX_Last.ino             # Прошивка приёмника (Arduino)
+</code></pre></div>
+
+<hr />
+<h2 id="_42">🚀 Перспективы развития</h2>
+<h3 id="_43">Запланированные функции</h3>
+<ul>
+<li>[x] Добавить датчики температуры/напряжения на RX</li>
+<li>[x] Реализовать энергосбережение для батарейных RX</li>
+<li>[x] Переход TX на ESP32-C6</li>
+<li>[ ] Добавить графики статистики использования</li>
+<li>[ ] Добавить интеграцию техники в качестве мониторинга</li>
+<li>[ ] Контроль трехфазного напряжения</li>
+</ul>
+<h3 id="_44">Аппаратные улучшения</h3>
+<ul>
+<li><strong>Солнечное питание</strong> — автономные RX станции</li>
+</ul>
+<hr />
+<h2 id="_45">📄 Лицензия</h2>
+<p><strong>Пообъектная именная лицензия</strong></p>
+<p><strong>Автор</strong>: Листопад Денис уч. Сисим Дражный</p>
+<hr />
+<p><strong>Дата обновления:</strong> 12 февраля 2026 г.</p>
+</body>
+</html>
